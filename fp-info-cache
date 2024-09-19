@@ -1,4 +1,4 @@
-22175586659790087
+22177313363123796
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -91321,6 +91321,13 @@ varistor
 0
 2
 2
+hpdl_1414
+hpdl-1414
+
+
+0
+0
+0
 pmod
 PinHeader_2x06_P2.54mm_PMODPeriph2B
 Through hole angled pin header, 2x06, 2.54mm pitch, 6mm pin length, double rows
