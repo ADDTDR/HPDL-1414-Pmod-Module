@@ -62,6 +62,57 @@
         )
       )
     )
+    (symbol "Device:C_Small" (pin_numbers hide) (pin_names (offset 0.254) hide) (in_bom yes) (on_board yes)
+      (property "Reference" "C" (at 0.254 1.778 0)
+        (effects (font (size 1.27 1.27)) (justify left))
+      )
+      (property "Value" "C_Small" (at 0.254 -2.032 0)
+        (effects (font (size 1.27 1.27)) (justify left))
+      )
+      (property "Footprint" "" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Datasheet" "~" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_keywords" "capacitor cap" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_description" "Unpolarized capacitor, small symbol" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_fp_filters" "C_*" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (symbol "C_Small_0_1"
+        (polyline
+          (pts
+            (xy -1.524 -0.508)
+            (xy 1.524 -0.508)
+          )
+          (stroke (width 0.3302) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -1.524 0.508)
+            (xy 1.524 0.508)
+          )
+          (stroke (width 0.3048) (type default))
+          (fill (type none))
+        )
+      )
+      (symbol "C_Small_1_1"
+        (pin passive line (at 0 2.54 270) (length 2.032)
+          (name "~" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 0 -2.54 90) (length 2.032)
+          (name "~" (effects (font (size 1.27 1.27))))
+          (number "2" (effects (font (size 1.27 1.27))))
+        )
+      )
+    )
     (symbol "hpdl-1414:HPDL-1414" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "DS" (at 20.32 -2.54 0)
         (effects (font (size 1.524 1.524)))
@@ -1084,6 +1135,10 @@
     (stroke (width 0) (type default))
     (uuid 1ecb86ad-8ac0-4b03-9ca5-81d4746a650f)
   )
+  (wire (pts (xy 80.01 78.74) (xy 80.01 81.28))
+    (stroke (width 0) (type default))
+    (uuid 1fb2550b-4183-49b0-8fde-19a84abc5da8)
+  )
   (bus (pts (xy 96.52 19.05) (xy 93.98 19.05))
     (stroke (width 0) (type default))
     (uuid 2418c3b5-9a3e-4992-b557-cc086be967d1)
@@ -1190,6 +1245,10 @@
   (wire (pts (xy 93.98 21.59) (xy 93.98 34.29))
     (stroke (width 0) (type default))
     (uuid 4a768a4a-8944-44b2-a4d6-8c59ae8fe790)
+  )
+  (wire (pts (xy 80.01 69.85) (xy 80.01 73.66))
+    (stroke (width 0) (type default))
+    (uuid 4e953224-3122-4058-8955-c9dbbfb079a3)
   )
   (bus (pts (xy 138.43 19.05) (xy 125.73 19.05))
     (stroke (width 0) (type default))
@@ -1997,6 +2056,47 @@
     )
   )
 
+  (symbol (lib_id "power:GND") (at 80.01 81.28 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 2af678da-0320-403b-a9f5-ae78bb8c4520)
+    (property "Reference" "#PWR033" (at 80.01 87.63 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (at 80.137 85.6742 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 80.01 81.28 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 80.01 81.28 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 3eace68a-ce89-42d6-bbed-9d4be531e7f9))
+    (instances
+      (project "LTP305_ESP32_CLOCK"
+        (path "/c007e288-8439-49d9-bbdf-49724c34958c"
+          (reference "#PWR033") (unit 1)
+        )
+      )
+      (project "hpdl_1414_pmod"
+        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+          (reference "#PWR018") (unit 1)
+        )
+      )
+      (project "ltp_kikad"
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba"
+          (reference "#PWR09") (unit 1)
+        )
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba/eeffdcd2-f49f-4c6e-9443-50950813e7b1"
+          (reference "#PWR035") (unit 1)
+        )
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba/7d22e16e-a0ba-4766-b1de-c8cbb28f14f7"
+          (reference "#PWR014") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "power:VDD") (at 93.98 64.77 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2eeb8188-1a53-4c41-ae8e-45a8b8864c1c)
@@ -2042,6 +2142,31 @@
       (project "hpdl_1414_pmod"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR03") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "power:VDD") (at 80.01 69.85 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 4a5684a9-c848-4805-9fbc-c48507f9950c)
+    (property "Reference" "#PWR017" (at 80.01 73.66 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "VDD" (at 74.93 68.58 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (at 80.01 69.85 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 80.01 69.85 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 81d661ce-f144-4ec3-abe1-06bccdd2fc05))
+    (instances
+      (project "hpdl_1414_pmod"
+        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+          (reference "#PWR017") (unit 1)
         )
       )
     )
@@ -2348,6 +2473,48 @@
       (project "hpdl_1414_pmod"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "DS4") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Device:C_Small") (at 80.01 76.2 180) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid c9beb2f2-6933-4b7b-a132-2065f6acec67)
+    (property "Reference" "C7" (at 85.09 74.93 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "15uF" (at 85.09 77.47 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Capacitor_SMD:C_1210_3225Metric_Pad1.33x2.70mm_HandSolder" (at 80.01 76.2 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 80.01 76.2 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid e1e95228-5dc1-4ceb-930c-8d432d111ace))
+    (pin "2" (uuid 29c574be-86ca-4c29-be02-43bf349f6228))
+    (instances
+      (project "LTP305_ESP32_CLOCK"
+        (path "/c007e288-8439-49d9-bbdf-49724c34958c"
+          (reference "C7") (unit 1)
+        )
+      )
+      (project "hpdl_1414_pmod"
+        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+          (reference "C4") (unit 1)
+        )
+      )
+      (project "ltp_kikad"
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba"
+          (reference "C6") (unit 1)
+        )
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba/eeffdcd2-f49f-4c6e-9443-50950813e7b1"
+          (reference "C10") (unit 1)
+        )
+        (path "/eed35b77-cbf9-4596-9b17-2558f81058ba/7d22e16e-a0ba-4766-b1de-c8cbb28f14f7"
+          (reference "C2") (unit 1)
         )
       )
     )
