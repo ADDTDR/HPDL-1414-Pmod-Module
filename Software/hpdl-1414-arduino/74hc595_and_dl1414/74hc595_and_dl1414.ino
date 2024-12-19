@@ -1,3 +1,4 @@
+#include <Arduino.h>
 
 
 int latchPin = A2; // Latch pin of 74HC595 is connected to Digital pin 10
@@ -7,11 +8,10 @@ int dataPin = A0; // Data pin of 74HC595 is connected to Digital pin 8
 
 void setup()
 {
- // Set all the pins of 74HC595 as OUTPUT
+ // Set all the pins for  74HC595 as OUTPUT
  pinMode(latchPin, OUTPUT);
  pinMode(dataPin, OUTPUT);
  pinMode(clockPin, OUTPUT);
-  
 
 }
 
@@ -19,50 +19,19 @@ void updateShiftRegister2(uint8_t pos, uint8_t val)
 {
 // fix for adre pmod extnder v 1 
 digitalWrite(latchPin, LOW);
-// To match bit order of pmod led V.1.1
-// uint8_t pos_ = pos << 4 | (pos >> 4) & 0b00001111;
-
 shiftOut(dataPin, clockPin, MSBFIRST, pos);
-
 shiftOut(dataPin, clockPin, MSBFIRST, val);
-
-digitalWrite(latchPin, HIGH);
-
-}
-
-
-void updateShiftRegister(uint8_t val, uint8_t pos)
-{
-
-digitalWrite(latchPin, LOW);
-// shiftOut(dataPin, clockPin, MSBFIRST, val);
-// shiftOut(dataPin, clockPin, MSBFIRST, pos);
-
-
-
 digitalWrite(latchPin, HIGH);
 
 }
 
 
 void place_on_display(uint8_t val, uint8_t pos){
-// on 2 modules 8 laces adress 0 - 7 
-// uint8_t base = 0b11000000;
-
-
 updateShiftRegister2(pos, val);
-
-//  if (pos <= 3){
-//   base = 0b11100000;
-//  }
-//  pos = pos << 2; 
-//  updateShiftRegister(val << 1, base | pos );
-  
-  
 }
 
 void displayMessage(const char* message) {
-    // Ensure the message is 16 characters long.
+
     char buffer[17] = {0}; // One extra for null terminator
     strncpy(buffer, message, 16); // Copy at most 16 characters
 
@@ -99,274 +68,10 @@ const uint8_t displayCommands[16][3] = {
 
 
 void print_on_display(const std::string &str){
-  // for(uint8_t i = str.length() - 1; i >= 0; -- i){
-  //   place_on_display(str[i], 0);
-  // }
-  // place_on_display('A',  0);
-  // place_on_display('B',  1);
-
-
-// map char position to display module by using int division like // by 4 for is amount of the chars in diplay module 
-// offset to represnt xwr signal 
-// ignaore first 2 bits 
-// last 
-
-// ds modules are from 0 to 3 
-//  char 15 map to ds module 3 by 15 // 4 is 3
-// position withwin display by resultig 15 - 3 * 4 = 3 bulbde element in dispay module  
-// 1
-// >>> 15 // 4
-// 3
-// >>> 13 // 4
-// 3
-// >>> 15 // 4
-// 3
-// >>> 14 // 4
-// 3
-// >>> 13 // 4
-// 3
-// >>> 12 // 4
-// 3
-// >>> 11 // 4
-// 2
-
-
-
-
-
-displayMessage("HELLO WORLD !!!!");
-delay(800);
-
-  place_on_display('A',  0b11111111);
-  place_on_display('A',  0b11111011);
-  place_on_display('A',  0b11111111);
-  // delay(100);
-  place_on_display('2',  0b11111110);
-  place_on_display('2',  0b11111010);
-  place_on_display('2',  0b11111110);
-  // delay(100);
-  place_on_display('B',  0b11111101);
-  place_on_display('B',  0b11111001);
-  place_on_display('B',  0b11111101);
-  // delay(100);
-  place_on_display('4',  0b11111100);
-  place_on_display('4',  0b11111000);
-  place_on_display('4',  0b11111100);
-  // delay(100);
-
-  place_on_display('5',  0b11111111);
-  place_on_display('5',  0b11110111);
-  place_on_display('5',  0b11111111);
-
-  place_on_display('6',  0b11111110);
-  place_on_display('6',  0b11110110);
-  place_on_display('6',  0b11111110); 
-
-  // delay(100);
-  place_on_display('7',  0b11111101);
-  place_on_display('7',  0b11110101);
-  place_on_display('7',  0b11111101);
-  // delay(100);
-
-  place_on_display('8',  0b11111100);
-  place_on_display('8',  0b11110100);
-  place_on_display('8',  0b11111100);
-  // delay(100);
-
-
-  place_on_display('9',  0b11111111);
-  place_on_display('9',  0b11101111);
-  place_on_display('9',  0b11111111);
-
-
-  place_on_display('A',  0b11111110);
-  place_on_display('A',  0b11101110);
-  place_on_display('A',  0b11111110);
-
-
-
-  place_on_display('B',  0b11111101);
-  place_on_display('B',  0b11101101);
-  place_on_display('B',  0b11111101);
-
-
-
-  place_on_display('C',  0b11111100);
-  place_on_display('C',  0b11101100);
-  place_on_display('C',  0b11111100);
-
-
-  
-  place_on_display('D',  0b11111111);
-  place_on_display('D',  0b11011111);
-  place_on_display('D',  0b11111111);
-
-  place_on_display('E',  0b11111110);
-  place_on_display('E',  0b11011110);
-  place_on_display('E',  0b11111110);
-
-
-  place_on_display('F',  0b11111101);
-  place_on_display('F',  0b11011101);
-  place_on_display('F',  0b11111101);
-
-
-  place_on_display('G',  0b11111100);
-  place_on_display('G',  0b11011100);
-  place_on_display('G',  0b11111100);
-
-
-
-delay(500);
-
-
-place_on_display('O',  0b11111111);
-  place_on_display('O',  0b11111011);
-  place_on_display('O',  0b11111111);
-  // delay(100);
-  place_on_display('O',  0b11111110);
-  place_on_display('O',  0b11111010);
-  place_on_display('O',  0b11111110);
-  // delay(100);
-  place_on_display('P',  0b11111101);
-  place_on_display('P',  0b11111001);
-  place_on_display('P',  0b11111101);
-  // delay(100);
-  place_on_display('S',  0b11111100);
-  place_on_display('S',  0b11111000);
-  place_on_display('S',  0b11111100);
-  // delay(100);
-
-  place_on_display('!',  0b11111111);
-  place_on_display('!',  0b11110111);
-  place_on_display('!',  0b11111111);
-
-  place_on_display(' ',  0b11111110);
-  place_on_display(' ',  0b11110110);
-  place_on_display(' ',  0b11111110); 
-
-  // delay(100);
-  place_on_display('T',  0b11111101);
-  place_on_display('T',  0b11110101);
-  place_on_display('T',  0b11111101);
-  // delay(100);
-
-  place_on_display('R',  0b11111100);
-  place_on_display('R',  0b11110100);
-  place_on_display('R',  0b11111100);
-  // delay(100);
-
-
-  place_on_display('Y',  0b11111111);
-  place_on_display('Y',  0b11101111);
-  place_on_display('Y',  0b11111111);
-
-
-  place_on_display(' ',  0b11111110);
-  place_on_display(' ',  0b11101110);
-  place_on_display(' ',  0b11111110);
-
-
-
-  place_on_display('A',  0b11111101);
-  place_on_display('A',  0b11101101);
-  place_on_display('A',  0b11111101);
-
-
-
-  place_on_display('G',  0b11111100);
-  place_on_display('G',  0b11101100);
-  place_on_display('G',  0b11111100);
-
-
-  
-  place_on_display('A',  0b11111111);
-  place_on_display('A',  0b11011111);
-  place_on_display('A',  0b11111111);
-
-  place_on_display('I',  0b11111110);
-  place_on_display('I',  0b11011110);
-  place_on_display('I',  0b11111110);
-
-
-  place_on_display('N',  0b11111101);
-  place_on_display('N',  0b11011101);
-  place_on_display('N',  0b11111101);
-
-
-  place_on_display('!',  0b11111100);
-  place_on_display('!',  0b11011100);
-  place_on_display('!',  0b11111100);
-
-
-delay(500);
-
-  // place_on_display('H',  0b11111101);
-  // place_on_display('H',  0b10111101);
-  // place_on_display('H',  0b11111101);
-
-
-
-  // place_on_display('C',  0b11111100);
-  // place_on_display('C',  0b10111100);
-  // place_on_display('C',  0b11111100);
-
-
-
-  // delay(100);
-  // place_on_display('F',  0b11011101);
-  // delay(100);
-  // place_on_display('G',  0b11011110);
-  // delay(100);
-  // place_on_display('H',  0b11011111);
-  // delay(100);
-  // place_on_display('2',  0b11111001);
-
-  // place_on_display('2',  0b11111001);
-
-
-
-  // place_on_display('2',  0b01011111);
-  // delay(1);
-  // place_on_display('2',  0b01011111);
-
-
-  // place_on_display('3',  0b01111111);
-  // delay(1);
-  // place_on_display('3',  0b01011111);
-
-  // place_on_display('4',  0b00111111);
-  // delay(1);
-  // place_on_display('4',  0b00011111);
-
-  // place_on_display('C',  0b10011111);
-  // place_on_display('C',  0b11011111);
-    //  for(int i =  str.length() -1 ; i >= 0; -- i){
-    //   place_on_display(str[i],  str.length() -1 - i); 
-    //  }
-
+ displayMessage("HELLO WORLD !!!!");
 }
 
-// Function to rotate the string and display it
-void rotate_string_and_display(const std::string &str, int delay_ms) {
-    std::string rotated_str = str;
-    int cy =0;
-    // Run indefinitely
-    while (cy < 85) {
-        for (size_t i = 0; i < rotated_str.length(); ++i) {
-            // Create a circular substring by appending the first characters at the end
-            std::string display_str = rotated_str.substr(i, 8);
-            if (display_str.length() < 8) {
-                display_str += rotated_str.substr(0, 8 - display_str.length());
-            }
 
-            // Print the display substring
-            print_on_display(display_str);
-            delay(delay_ms);
-            cy = cy + 1; 
-        }
-    }
-}
 
 std::string jokes[] = {
     "I TOLD MY WIFE SHE WAS DRAWING HER EYEBROWS TOO HIGH. SHE LOOKED SURPRISED.  ",
@@ -376,7 +81,7 @@ std::string jokes[] = {
     "I ONLY KNOW 25 LETTERS OF THE ALPHABET. I DON’T KNOW Y.",
     "WHY DID THE SCARECROW WIN AN AWARD? BECAUSE HE WAS OUT-STANDING IN HIS FIELD.",
     "I USED TO BE IN SHAPE. THEN I CHOSE ROUND.",
-    "WHY CAN'T YOU GIVE Elsa A BALLOON? BECAUSE SHE WILL LET IT GO.",
+    "WHY CAN'T YOU GIVE ELSA A BALLOON? BECAUSE SHE WILL LET IT GO.",
     "WHAT DO YOU CALL FAKE SPAGHETTI? AN IMPASTA.",
     "I'M READING A BOOK ON ANTI-GRAVITY. IT'S IMPOSSIBLE TO PUT DOWN!",
     "WHY DID THE GOLFER BRING TWO PAIRS OF PANTS? IN CASE HE GOT A HOLE IN ONE.",
@@ -385,23 +90,34 @@ std::string jokes[] = {
     "WHY DID THE CHMISTRY TEACHER BREAK UP WITH THE BIOLOGY TEACHER? THERE WAS NO CHEMISTRY."
 };
 
-// X X WR1 WR2 
+const int numJokes = sizeof(jokes) / sizeof(jokes[0]);
+int currentJokeIndex = 0;
+int rotationCount = 0;
+
+void rotateAndDisplayJokes() {
+    std::string currentJoke = jokes[currentJokeIndex] + " "; // Add a space for rotation
+    int jokeLength = currentJoke.length();
+    
+    // Display the joke twice in a rotating manner
+    for (int round = 0; round < 2; ++round) {
+        for (int i = 0; i < jokeLength; ++i) {
+            std::string visible = currentJoke.substr(i) + currentJoke.substr(0, i);
+            displayMessage(visible.c_str()); // Convert to const char*
+            delay(150); // Adjust for desired scroll speed
+        }
+    }
+    displayMessage("                ");
+
+    // Move to the next joke or reset if we've displayed all
+    currentJokeIndex = (currentJokeIndex + 1) % numJokes;
+    rotationCount++;
+}
+
+
 void loop() {
-//  state_1();
-// delay(500);
-// print_on_display("PLAYTHIS");
 
-// delay(500);
-// print_on_display("12345678");
-
-  
-    // int jokeIndex = random(0, sizeof(jokes) / sizeof(jokes[0]));
-    // rotate_string_and_display(jokes[jokeIndex], 150);
-
-      for (const std::string& joke : jokes) {
-        rotate_string_and_display(joke, 120);
-      }
-
+  rotateAndDisplayJokes();
+  delay(886);
 
 
 }
