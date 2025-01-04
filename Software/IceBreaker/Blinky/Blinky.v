@@ -77,13 +77,18 @@ memory mem_strorage(
   assign LEDR_N = 1'b1;
   assign {LED5, LED4, LED3, LED2, LED1} = 5'b0;
   
-  assign {HPDL_A0, HPDL_A1} = 2'b0;
-// assign HPDL_A0 = counter[23];
-// assign HPDL_A1 = counter[22];
+
+assign HPDL_A0 = address_counter[0];
+assign HPDL_A1 = address_counter[1];
   
 
-assign {HPDL_WR1, HPDL_WR2, HPDL_WR3, HPDL_WR4 } = 4'b1110;
-  
+
+  assign  HPDL_WR1 = !(address_counter[3] == 0 && address_counter[2] == 0 ); 
+  assign  HPDL_WR2 = !(address_counter[3] == 0 && address_counter[2] == 1 );
+  assign  HPDL_WR3 = !(address_counter[3] == 1 && address_counter[2] == 0 );
+  assign  HPDL_WR4 = !(address_counter[3] == 1 && address_counter[2] == 1 );
+
+
 
 endmodule
 
