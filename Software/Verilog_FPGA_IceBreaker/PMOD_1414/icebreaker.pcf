@@ -4,6 +4,9 @@ set_io -nowarn CLK        35
 # RS232
 set_io -nowarn RX          6
 set_io -nowarn TX          9
+set_io -nowarn FTDI_RX          6
+set_io -nowarn FTDI_TX          9
+
 
 # LEDs and Button
 set_io -nowarn BTN_N      10
