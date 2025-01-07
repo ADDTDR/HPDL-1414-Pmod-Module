@@ -62,36 +62,37 @@ module pmod_1414 (
   always @(posedge hpdl_clk) 
 	address_counter <= address_counter + 1;
 
-  memory mem_strorage(
-          .clk(CLK),
-          .w_en(RxD_data_ready),
-          .r_en(1'b1),
-          .w_addr(uart_rx_counter),
-          .w_data(RxD_data),
-          .r_addr(address_counter),
-          .r_data(data)
-      );
-  
+	memory mem_strorage(
+			.clk(CLK),
+			.w_en(RxD_data_ready),
+			.r_en(1'b1),
+			.w_addr(uart_rx_counter),
+			.w_data(RxD_data),
+			.r_addr(address_counter),
+			.r_data(data)
+		);
+	
   // Set address lines 
-  assign HPDL_A0 = !address_counter[0];
-  assign HPDL_A1 = !address_counter[1];
-   
+	assign HPDL_A0 = !address_counter[0];
+	assign HPDL_A1 = !address_counter[1];
+	
   // Generate write signal for each data and address combination 
-  assign  HPDL_WR1 = (address_counter[3] == 0 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1; 
-  assign  HPDL_WR2 = (address_counter[3] == 0 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
-  assign  HPDL_WR3 = (address_counter[3] == 1 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1;
-  assign  HPDL_WR4 = (address_counter[3] == 1 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
+	assign  HPDL_WR1 = (address_counter[3] == 0 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1; 
+	assign  HPDL_WR2 = (address_counter[3] == 0 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
+	assign  HPDL_WR3 = (address_counter[3] == 1 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1;
+	assign  HPDL_WR4 = (address_counter[3] == 1 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
 
-  wire tx_busy;
+	wire tx_busy;
 	wire RxD_data_ready;
 	wire [7:0] RxD_data;
 	reg [7:0] GPout;
-  reg [3:0] uart_rx_counter = 0;
+	reg [3:0] uart_rx_counter = 0;
 
   // Receive data 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
-  always @(posedge RxD_data_ready)
+	// Use negative edge to increment address counter only after byte is received 
+  	always @(negedge RxD_data_ready)
     uart_rx_counter <= uart_rx_counter + 1;
 	// Transmit received data + 1 
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(GPout), .TxD_busy(tx_busy));
@@ -114,10 +115,15 @@ module memory #(
   );
 
       reg [7:0]  mem [0:15];
+	  integer i;
 
       always @(posedge clk) begin
           if (w_en == 1'b1) begin
-              mem[w_addr] <= w_data;    
+			  for(i = 15; i > 0; i = i -1 )begin
+				mem[i] <= mem[i - 1];	
+			  end
+            //   mem[w_addr] <= w_data;    
+			mem[0] <= w_data;
           end
           
           if (r_en == 1'b1) begin
