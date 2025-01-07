@@ -120,10 +120,10 @@ module memory #(
       always @(posedge clk) begin
           if (w_en == 1'b1) begin
 			  for(i = 15; i > 0; i = i -1 )begin
-				mem[i] <= mem[i - 1];	
+				mem[i - 1] <= mem[i];	
 			  end
             //   mem[w_addr] <= w_data;    
-			mem[0] <= w_data;
+			mem[15] <= w_data;
           end
           
           if (r_en == 1'b1) begin
