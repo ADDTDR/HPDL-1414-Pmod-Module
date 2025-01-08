@@ -1,82 +1,74 @@
 
 module pmod_1414 (
-	input CLK,      //-- 12 Mhz
-	output LEDG_N,  
-	output LEDR_N,
-	output LED1,
-	output LED2,
-	output LED3,
-	output LED4,
-	output LED5,
-
-
-	output HPDL_D0,
-	output HPDL_D1,
-	output HPDL_D2,
-	output HPDL_D3,
-	output HPDL_D4,
-	output HPDL_D5,
-	output HPDL_D6,
-
-	output HPDL_A0,
-	output HPDL_A1,
-
-	output HPDL_WR1,
-	output HPDL_WR2,
-	output HPDL_WR3,
-	output HPDL_WR4,
-
-  output FTDI_TX,
-  input FTDI_RX
+		input CLK,      //-- 12 Mhz
+		output LEDG_N,  
+		output LEDR_N,
+		// Data lines 
+		output HPDL_D0,
+		output HPDL_D1,
+		output HPDL_D2,
+		output HPDL_D3,
+		output HPDL_D4,
+		output HPDL_D5,
+		output HPDL_D6,
+		// Place address line 
+		output HPDL_A0,
+		output HPDL_A1,
+		// Write enable lines 
+		output HPDL_WR1,
+		output HPDL_WR2,
+		output HPDL_WR3,
+		output HPDL_WR4,
+		// Serial connections 
+		output FTDI_TX,
+		input FTDI_RX
 
 );
 
-  //-- Toggle the green LED
-//   assign LEDG_N = counter[23];
-  assign LEDG_N = 1'b1; 
- //-- Turn off the other LEDs
-  assign LEDR_N = 1'b1;
-  assign {LED5, LED4, LED3, LED2, LED1} = 5'b0;
-  
-  assign HPDL_D6 = data[6];
-  assign HPDL_D5 = data[5];
-  assign HPDL_D4 = data[4];
-  assign HPDL_D3 = data[3];
-  assign HPDL_D2 = data[2];
-  assign HPDL_D1 = data[1];
-  assign HPDL_D0 = data[0];
-
-  reg [23:0] counter = 0;
-  reg [3:0] address_counter = 0;
-  wire [7:0] data; 
-  wire hpdl_clk; 
-
-  // Generate slower clock for display modules 
-  always @(posedge CLK) 
-    counter <= counter + 1;
-
- assign hpdl_clk = counter[10];
-//   assign hpdl_clk = CLK;
-
-  // Count 0 to 15 for 16 display places
-  always @(posedge hpdl_clk) 
-	address_counter <= address_counter + 1;
-
-	memory mem_strorage(
-			.clk(CLK),
-			.w_en(RxD_data_ready),
-			.r_en(1'b1),
-			.w_addr(uart_rx_counter),
-			.w_data(RxD_data),
-			.r_addr(address_counter),
-			.r_data(data)
-		);
+	// Turn off green LED
+	assign LEDG_N = 1'b1; 
+	assign LEDR_N = 1'b1;
 	
-  // Set address lines 
+	assign HPDL_D6 = data[6];
+	assign HPDL_D5 = data[5];
+	assign HPDL_D4 = data[4];
+	assign HPDL_D3 = data[3];
+	assign HPDL_D2 = data[2];
+	assign HPDL_D1 = data[1];
+	assign HPDL_D0 = data[0];
+
+	reg [23:0] counter = 0;
+	reg [3:0] address_counter = 0;
+	wire [7:0] data; 
+	wire hpdl_clk; 
+
+	// Generate slower clock for display modules 
+	always @(posedge CLK) 
+	counter <= counter + 1;
+	// Generate slower clock in counter and assign and use it for hdpl display 
+	assign hpdl_clk = counter[10];
+
+	// assign hpdl_clk = CLK;
+
+	// Count 0 to 15 for 16 display places
+	always @(posedge hpdl_clk) 
+		address_counter <= address_counter + 1;
+	//  Character memory, bytes stored from  uart and taken by hpdl module 
+	memory mem_strorage(
+				.clk(CLK),
+				.w_en(RxD_data_ready),
+				.r_en(1'b1),
+				.w_addr(uart_rx_counter),
+				.w_data(RxD_data),
+				.r_addr(address_counter),
+				.r_data(data)
+			);
+		
+	// Set address lines 
 	assign HPDL_A0 = !address_counter[0];
 	assign HPDL_A1 = !address_counter[1];
-	
-  // Generate write signal for each data and address combination 
+		
+	// Generate write signal for each data and address combination 
 	assign  HPDL_WR1 = (address_counter[3] == 0 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1; 
 	assign  HPDL_WR2 = (address_counter[3] == 0 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
 	assign  HPDL_WR3 = (address_counter[3] == 1 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1;
@@ -88,18 +80,19 @@ module pmod_1414 (
 	reg [7:0] GPout;
 	reg [3:0] uart_rx_counter = 0;
 
-  // Receive data 
+	// Receive data from uart 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
+	// Save a copy of received data from uart 
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
 	// Use negative edge to increment address counter only after byte is received 
-  	always @(negedge RxD_data_ready)
-    uart_rx_counter <= uart_rx_counter + 1;
+	always @(negedge RxD_data_ready)
+	uart_rx_counter <= uart_rx_counter + 1;
 	// Transmit received data + 1 
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(GPout), .TxD_busy(tx_busy));
 
 endmodule
 
-
+////////////////////////////////////////////////////////
 //  Memory block for display buffer 
 module memory #(
       parameter INIT_FILE = "mem_init.txt"
@@ -122,7 +115,8 @@ module memory #(
 			  for(i = 15; i > 0; i = i -1 )begin
 				mem[i - 1] <= mem[i];	
 			  end
-            //   mem[w_addr] <= w_data;    
+            //   mem[w_addr] <= w_data;   
+			// 15 address is used fill data from the right side   
 			mem[15] <= w_data;
           end
           
