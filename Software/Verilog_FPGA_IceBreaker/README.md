@@ -2,7 +2,7 @@
 Data, 
 Address counter used for display  place address  and active #wrline 
 ![alt text](PMOD_1414/Capture.PNG)
-## Demo 
+## Demo display board connected to the icebreaker board vi 2 PMOD connection
 Data send from uart 
 ![alt text](IMG_6134.jpeg)
 ![alt text](IMG_6135.jpeg)
