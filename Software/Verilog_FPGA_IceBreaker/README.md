@@ -7,4 +7,4 @@ Data send from uart
 ![alt text](IMG_6134.jpeg)
 ![alt text](IMG_6135.jpeg)
 
-sending data from you wil override ride the initial message till it reaches position 16 after it shifts out to the right. 
+sending data from via uart/com   override ride the initial message till it reaches position 16, after it shifts out to the right. 
