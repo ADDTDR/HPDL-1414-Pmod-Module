@@ -82,11 +82,17 @@ module pmod_1414 (
 
 	// Receive data from uart 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
+	
 	// Save a copy of received data from uart 
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
+	
 	// Use negative edge to increment address counter only after byte is received 
-	always @(negedge RxD_data_ready)
+	always @(negedge RxD_data_ready)begin 
+	if (uart_rx_counter < 15) begin 
 	uart_rx_counter <= uart_rx_counter + 1;
+	end
+	end
+	
 	// Transmit received data + 1 
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(GPout), .TxD_busy(tx_busy));
 
@@ -112,12 +118,14 @@ module memory #(
 
       always @(posedge clk) begin
           if (w_en == 1'b1) begin
+			if(w_addr >= 15)begin
 			  for(i = 15; i > 0; i = i -1 )begin
 				mem[i - 1] <= mem[i];	
 			  end
-            //   mem[w_addr] <= w_data;   
+			end
+            mem[w_addr] <= w_data;   
 			// 15 address is used fill data from the right side   
-			mem[15] <= w_data;
+			// mem[15] <= w_data;
           end
           
           if (r_en == 1'b1) begin
