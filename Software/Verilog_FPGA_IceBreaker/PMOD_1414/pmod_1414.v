@@ -37,6 +37,9 @@ module pmod_1414 (
 	assign HPDL_D1 = data[1];
 	assign HPDL_D0 = data[0];
 
+	// Clear code from serial 
+	parameter BKSP = 8'h08;
+
 	reg [23:0] counter = 0;
 	reg [3:0] address_counter = 0;
 	wire [7:0] data; 
@@ -87,10 +90,17 @@ module pmod_1414 (
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
 	
 	// Use negative edge to increment address counter only after byte is received 
-	always @(negedge RxD_data_ready)begin 
-	if (uart_rx_counter < 15) begin 
-	uart_rx_counter <= uart_rx_counter + 1;
-	end
+	always @(negedge RxD_data_ready)begin
+		// if backspace move cursor back 
+		if (RxD_data == BKSP ) begin
+				// Check if first position 
+				if (uart_rx_counter > 0 )
+				uart_rx_counter <= uart_rx_counter - 1;
+		end 	 
+
+		if ((uart_rx_counter < 15) && (RxD_data != BKSP)) begin 	
+			uart_rx_counter <= uart_rx_counter + 1;
+			end
 	end
 	
 	// Transmit received data + 1 
