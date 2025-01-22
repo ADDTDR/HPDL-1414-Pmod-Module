@@ -103,7 +103,7 @@ module pmod_1414 (
 			end
 	end
 	
-	// Transmit received data + 1 
+
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(GPout), .TxD_busy(tx_busy));
 
 endmodule
