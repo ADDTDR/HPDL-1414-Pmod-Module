@@ -51,12 +51,10 @@ module pmod_1414 (
 	// Generate slower clock in counter and assign and use it for hdpl display 
 	assign hpdl_clk = counter[10];
 
-	// assign hpdl_clk = CLK;
-
 	// Count 0 to 15 for 16 display places
 	always @(posedge hpdl_clk) 
 		address_counter <= address_counter + 1;
-	//  Character memory, bytes stored from  uart and taken by hpdl module 
+	// Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
 				.clk(CLK),
 				.w_en(RxD_data_ready),
