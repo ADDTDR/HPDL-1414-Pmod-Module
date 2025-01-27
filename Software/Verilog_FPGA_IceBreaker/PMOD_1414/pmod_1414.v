@@ -59,10 +59,10 @@ module pmod_1414 (
 	//  Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
 				.clk(CLK),
-				.w_en(RxD_data_ready),
+				.w_en(mem_wen),
 				.r_en(1'b1),
 				.w_addr(uart_rx_counter),
-				.w_data(RxD_data),
+				.w_data(GPout),
 				.r_addr(address_counter),
 				.r_data(data)
 			);
@@ -83,6 +83,9 @@ module pmod_1414 (
 	reg [7:0] GPout;
 	reg [3:0] uart_rx_counter = 0;
 
+	wire mem_wen;
+	assign mem_wen = (RxD_data_ready == 1'b1 && GPout != BKSP) ? 1'b1 : 1'b0;
+
 	// Receive data from uart 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
 	
@@ -92,19 +95,19 @@ module pmod_1414 (
 	// Use negative edge to increment address counter only after byte is received 
 	always @(negedge RxD_data_ready)begin
 		// if backspace move cursor back 
-		if (RxD_data == BKSP ) begin
+		if (GPout == BKSP ) begin
 				// Check if first position 
 				if (uart_rx_counter > 0 )
 				uart_rx_counter <= uart_rx_counter - 1;
 		end 	 
 
-		if ((uart_rx_counter < 15) && (RxD_data != BKSP)) begin 	
+		if ((uart_rx_counter < 15) && (GPout != BKSP)) begin 	
 			uart_rx_counter <= uart_rx_counter + 1;
 			end
 	end
 	
 
-	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(GPout), .TxD_busy(tx_busy));
+	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(RxD_data), .TxD_busy(tx_busy));
 
 endmodule
 
