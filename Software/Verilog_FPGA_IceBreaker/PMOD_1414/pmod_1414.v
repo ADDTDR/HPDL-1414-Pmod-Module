@@ -39,17 +39,23 @@ module pmod_1414 (
 
 	// Clear code from serial 
 	parameter BKSP = 8'h08;
+	// Caret char 
+	
 
 	reg [23:0] counter = 0;
 	reg [3:0] address_counter = 0;
 	wire [7:0] data; 
 	wire hpdl_clk; 
+	wire caret_strobe; 
 
 	// Generate slower clock for display modules 
 	always @(posedge CLK) 
 	counter <= counter + 1;
 	// Generate slower clock in counter and assign and use it for hdpl display 
 	assign hpdl_clk = counter[10];
+
+	// Generate strobe to blink the caret position 
+	assign caret_strobe = counter[22];
 
 	// Count 0 to 15 for 16 display places
 	always @(posedge hpdl_clk) 
@@ -62,6 +68,7 @@ module pmod_1414 (
 				.w_addr(uart_rx_counter),
 				.w_data(GPout),
 				.r_addr(address_counter),
+				.caret_strobe(caret_strobe),
 				.r_data(data)
 			);
 		
@@ -120,11 +127,12 @@ module memory #(
       input [3:0] w_addr,
       input [3:0] r_addr,
       input [7:0] w_data, 
-
+	  input caret_strobe, 
       output reg [7:0] r_data
   );
-
-      reg [7:0]  mem [0:15];
+	  
+	  parameter CARETCHR = 8'h5f;
+	  reg [7:0]  mem [0:15];
 	  integer i;
 
       always @(posedge clk) begin
@@ -140,7 +148,11 @@ module memory #(
           end
           
           if (r_en == 1'b1) begin
-              r_data <= mem[r_addr];
+			  if (r_addr == w_addr) 
+			  	// Replace data with caret using caret strobe signal 
+			  	r_data <= (caret_strobe == 1'b1 ) ? mem[r_addr] : CARETCHR;
+			  else
+              	r_data <= mem[r_addr];
           end
       end
 
