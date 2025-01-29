@@ -39,18 +39,17 @@ module pmod_1414 (
 
 	// Clear code from serial 
 	parameter BKSP = 8'h08;
-	// Caret char 
 	
-
 	reg [23:0] counter = 0;
 	reg [3:0] address_counter = 0;
 	wire [7:0] data; 
 	wire hpdl_clk; 
 	wire caret_strobe; 
 
-	// Generate slower clock for display modules 
+	// Generate slower clock signals  
 	always @(posedge CLK) 
 	counter <= counter + 1;
+	
 	// Generate slower clock in counter and assign and use it for hdpl display 
 	assign hpdl_clk = counter[10];
 
@@ -60,6 +59,7 @@ module pmod_1414 (
 	// Count 0 to 15 for 16 display places
 	always @(posedge hpdl_clk) 
 		address_counter <= address_counter + 1;
+	
 	// Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
 				.clk(CLK),
@@ -82,21 +82,23 @@ module pmod_1414 (
 	assign  HPDL_WR3 = (address_counter[3] == 1 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1;
 	assign  HPDL_WR4 = (address_counter[3] == 1 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
 
+	// Uart signals and bus 
 	wire tx_busy;
 	wire RxD_data_ready;
 	wire [7:0] RxD_data;
 	reg [7:0] GPout;
 	reg [3:0] uart_rx_counter = 0;
-
+	
+	// Disable memory write when backsp char received
 	wire mem_wen;
 	assign mem_wen = (RxD_data_ready == 1'b1 && GPout != BKSP) ? 1'b1 : 1'b0;
 
-	// Receive data from uart 
-	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
-	
 	// Save a copy of received data from uart 
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
-	
+
+	// Receive data from uart 
+	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
+		
 	// Use negative edge to increment address counter only after byte is received 
 	always @(negedge RxD_data_ready)begin
 		// if backspace move cursor back 
@@ -111,7 +113,6 @@ module pmod_1414 (
 			end
 	end
 	
-
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(RxD_data), .TxD_busy(tx_busy));
 
 endmodule
@@ -148,6 +149,7 @@ module memory #(
           end
           
           if (r_en == 1'b1) begin
+			  // Blink recent character position 
 			  if (r_addr == w_addr) 
 			  	// Replace data with caret using caret strobe signal 
 			  	r_data <= (caret_strobe == 1'b1 ) ? mem[r_addr] : CARETCHR;
