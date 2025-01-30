@@ -2,3 +2,7 @@ hpdl_1414_pmod-backups/*
 hpdl_1414_pmod-backups/hpdl_1414_pmod-2024-09-19_221907.zip
 hpdl_1414_pmod-backups/hpdl_1414_pmod-2024-09-19_221907.zip
 .DS_Store
+Software/Verilog_FPGA_IceBreaker/PMOD_1414/hardware.*
+Software/Verilog_FPGA_IceBreaker/PMOD_1414/abc.history
+Software/Verilog_FPGA_IceBreaker/PMOD_1414/.sconsign.dblite
+Software/Verilog_FPGA_IceBreaker/PMOD_1414/pmod_1414_tb.vcd
