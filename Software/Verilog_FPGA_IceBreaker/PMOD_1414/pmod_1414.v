@@ -21,7 +21,8 @@ module pmod_1414 (
 		output HPDL_WR4,
 		// Serial connections 
 		output FTDI_TX,
-		input FTDI_RX
+		input FTDI_RX,
+		input RESET
 
 );
 
