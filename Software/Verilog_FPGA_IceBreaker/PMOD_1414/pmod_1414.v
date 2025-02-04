@@ -22,7 +22,6 @@ module pmod_1414 (
 		// Serial connections 
 		output FTDI_TX,
 		input FTDI_RX,
-		input RESET
 
 );
 
@@ -43,6 +42,7 @@ module pmod_1414 (
 	
 	reg [23:0] counter = 0;
 	reg [3:0] address_counter = 0;
+	reg [3:0] uart_rx_counter = 0;
 	wire [7:0] data; 
 	wire hpdl_clk; 
 	wire caret_strobe; 
@@ -88,7 +88,6 @@ module pmod_1414 (
 	wire RxD_data_ready;
 	wire [7:0] RxD_data;
 	reg [7:0] GPout;
-	reg [3:0] uart_rx_counter = 0;
 	
 	// Disable memory write when backsp char received
 	wire mem_wen;
