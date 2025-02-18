@@ -15,18 +15,25 @@ module memory #(
 	  
 	  parameter CARETCHR = 8'h5f;
       localparam DISPLAY_LENGTH = 15;
-
-	  reg [7:0]  mem [0:15];
+	  reg [7:0]  mem [0:16];
+      reg [0:0] r_shift_enable = 1'b0;
 	  integer i;
 
       always @(posedge i_clk) begin
           if (i_write_enable == 1'b1) begin
+            
 			if(i_write_address >= DISPLAY_LENGTH)begin
-			  for(i = 15; i > 0; i = i -1 )begin
-				mem[i - 1] <= mem[i];	
-			  end
+              if (r_shift_enable == 1'b1)  
+                for(i = 15; i > 0; i = i -1 )begin
+                    mem[i - 1] <= mem[i];	
+                end
 			end
-            mem[i_write_address] <= i_write_data;   
+
+            if (i_write_address == DISPLAY_LENGTH)
+                r_shift_enable <= 1'b1;
+
+             mem[i_write_address] <= i_write_data;
+              
           end
           
           if (i_read_enable == 1'b1) begin

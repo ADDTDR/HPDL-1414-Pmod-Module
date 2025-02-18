@@ -39,6 +39,7 @@ module pmod_1414 (
 
 	// Clear code from serial 
 	localparam BKSP = 8'h08;
+	localparam DISPLAY_LENGTH = 15;
 	
 	reg [23:0] r_counter = 0;
 	reg [3:0] r_address_counter = 0;
@@ -108,7 +109,7 @@ module pmod_1414 (
 				r_uart_rx_counter <= r_uart_rx_counter - 1;
 		end 	 
 
-		if ((r_uart_rx_counter < 15) && (GPout != BKSP)) begin 	
+		if ((r_uart_rx_counter < DISPLAY_LENGTH) && (GPout != BKSP)) begin 	
 			r_uart_rx_counter <= r_uart_rx_counter + 1;
 			end
 	end
