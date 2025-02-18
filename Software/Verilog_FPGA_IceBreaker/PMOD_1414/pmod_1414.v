@@ -21,7 +21,7 @@ module pmod_1414 (
 		output HPDL_WR4,
 		// Serial connections 
 		output FTDI_TX,
-		input FTDI_RX,
+		input FTDI_RX
 
 );
 
@@ -29,59 +29,59 @@ module pmod_1414 (
 	assign LEDG_N = 1'b1; 
 	assign LEDR_N = 1'b1;
 	
-	assign HPDL_D6 = data[6];
-	assign HPDL_D5 = data[5];
-	assign HPDL_D4 = data[4];
-	assign HPDL_D3 = data[3];
-	assign HPDL_D2 = data[2];
-	assign HPDL_D1 = data[1];
-	assign HPDL_D0 = data[0];
+	assign HPDL_D6 = w_data[6];
+	assign HPDL_D5 = w_data[5];
+	assign HPDL_D4 = w_data[4];
+	assign HPDL_D3 = w_data[3];
+	assign HPDL_D2 = w_data[2];
+	assign HPDL_D1 = w_data[1];
+	assign HPDL_D0 = w_data[0];
 
 	// Clear code from serial 
-	parameter BKSP = 8'h08;
+	localparam BKSP = 8'h08;
 	
-	reg [23:0] counter = 0;
-	reg [3:0] address_counter = 0;
-	reg [3:0] uart_rx_counter = 0;
-	wire [7:0] data; 
-	wire hpdl_clk; 
-	wire caret_strobe; 
+	reg [23:0] r_counter = 0;
+	reg [3:0] r_address_counter = 0;
+	reg [3:0] r_uart_rx_counter = 0;
+	wire [7:0] w_data; 
+	wire w_hpdl_clk; 
+	wire w_caret_strobe; 
 
 	// Generate slower clock signals  
 	always @(posedge CLK) 
-	counter <= counter + 1;
+	r_counter <= r_counter + 1;
 	
-	// Generate slower clock in counter and assign and use it for hdpl display 
-	assign hpdl_clk = counter[10];
+	// Generate slower clock in r_counter and assign and use it for hdpl display 
+	assign w_hpdl_clk = r_counter[10];
 
 	// Generate strobe to blink the caret position 
-	assign caret_strobe = counter[22];
+	assign w_caret_strobe = r_counter[22];
 
 	// Count 0 to 15 for 16 display places
-	always @(posedge hpdl_clk) 
-		address_counter <= address_counter + 1;
+	always @(posedge w_hpdl_clk) 
+		r_address_counter <= r_address_counter + 1;
 	
 	// Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
-				.clk(CLK),
-				.w_en(mem_wen),
-				.r_en(1'b1),
-				.w_addr(uart_rx_counter),
-				.w_data(GPout),
-				.r_addr(address_counter),
-				.caret_strobe(caret_strobe),
-				.r_data(data)
+				.i_clk(CLK),
+				.i_write_enable(mem_wen),
+				.i_read_enable(1'b1),
+				.i_write_address(r_uart_rx_counter),
+				.i_write_data(GPout),
+				.i_read_address(r_address_counter),
+				.i_w_caret_strobe(w_caret_strobe),
+				.o_read_data(w_data)
 			);
 		
 	// Set address lines 
-	assign HPDL_A0 = !address_counter[0];
-	assign HPDL_A1 = !address_counter[1];
+	assign HPDL_A0 = !r_address_counter[0];
+	assign HPDL_A1 = !r_address_counter[1];
 		
-	// Generate write signal for each data and address combination 
-	assign  HPDL_WR1 = (address_counter[3] == 0 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1; 
-	assign  HPDL_WR2 = (address_counter[3] == 0 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
-	assign  HPDL_WR3 = (address_counter[3] == 1 && address_counter[2] == 0 ) ? hpdl_clk : 1'b1;
-	assign  HPDL_WR4 = (address_counter[3] == 1 && address_counter[2] == 1 ) ? hpdl_clk : 1'b1;
+	// Generate write signal for each w_data and address combination 
+	assign  HPDL_WR1 = (r_address_counter[3] == 0 && r_address_counter[2] == 0 ) ? w_hpdl_clk : 1'b1; 
+	assign  HPDL_WR2 = (r_address_counter[3] == 0 && r_address_counter[2] == 1 ) ? w_hpdl_clk : 1'b1;
+	assign  HPDL_WR3 = (r_address_counter[3] == 1 && r_address_counter[2] == 0 ) ? w_hpdl_clk : 1'b1;
+	assign  HPDL_WR4 = (r_address_counter[3] == 1 && r_address_counter[2] == 1 ) ? w_hpdl_clk : 1'b1;
 
 	// Uart signals and bus 
 	wire tx_busy;
@@ -93,23 +93,23 @@ module pmod_1414 (
 	wire mem_wen;
 	assign mem_wen = (RxD_data_ready == 1'b1 && GPout != BKSP) ? 1'b1 : 1'b0;
 
-	// Save a copy of received data from uart 
+	// Save a copy of received w_data from uart 
 	always @(posedge RxD_data_ready)  GPout <= RxD_data;
 
-	// Receive data from uart 
+	// Receive w_data from uart 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
 		
-	// Use negative edge to increment address counter only after byte is received 
+	// Use negative edge to increment address r_counter only after byte is received 
 	always @(negedge RxD_data_ready)begin
 		// if backspace move cursor back 
 		if (GPout == BKSP ) begin
 				// Check if first position 
-				if (uart_rx_counter > 0 )
-				uart_rx_counter <= uart_rx_counter - 1;
+				if (r_uart_rx_counter > 0 )
+				r_uart_rx_counter <= r_uart_rx_counter - 1;
 		end 	 
 
-		if ((uart_rx_counter < 15) && (GPout != BKSP)) begin 	
-			uart_rx_counter <= uart_rx_counter + 1;
+		if ((r_uart_rx_counter < 15) && (GPout != BKSP)) begin 	
+			r_uart_rx_counter <= r_uart_rx_counter + 1;
 			end
 	end
 	
@@ -117,52 +117,6 @@ module pmod_1414 (
 
 endmodule
 
-////////////////////////////////////////////////////////
-//  Memory block for display buffer 
-module memory #(
-      parameter INIT_FILE = "mem_init.txt"
-  )(
-      input clk,
-      input w_en,
-      input r_en,
-      input [3:0] w_addr,
-      input [3:0] r_addr,
-      input [7:0] w_data, 
-	  input caret_strobe, 
-      output reg [7:0] r_data
-  );
-	  
-	  parameter CARETCHR = 8'h5f;
-	  reg [7:0]  mem [0:15];
-	  integer i;
-
-      always @(posedge clk) begin
-          if (w_en == 1'b1) begin
-			if(w_addr >= 15)begin
-			  for(i = 15; i > 0; i = i -1 )begin
-				mem[i - 1] <= mem[i];	
-			  end
-			end
-            mem[w_addr] <= w_data;   
-			// 15 address is used fill data from the right side   
-			// mem[15] <= w_data;
-          end
-          
-          if (r_en == 1'b1) begin
-			  // Blink recent character position 
-			  if (r_addr == w_addr) 
-			  	// Replace data with caret using caret strobe signal 
-			  	r_data <= (caret_strobe == 1'b1 ) ? mem[r_addr] : CARETCHR;
-			  else
-              	r_data <= mem[r_addr];
-          end
-      end
-
-      initial if (INIT_FILE) begin
-          $readmemh(INIT_FILE, mem);
-      end
-    
-endmodule
 
 
 ////////////////////////////////////////////////////////
