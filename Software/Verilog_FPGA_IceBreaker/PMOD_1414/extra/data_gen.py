@@ -1,4 +1,4 @@
-message = "TINY TAPEOUT 10!"
+message = "TINY_TAPEOUT_10!"
 
 
 print('Message length', len(message))

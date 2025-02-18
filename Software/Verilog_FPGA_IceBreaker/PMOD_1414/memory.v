@@ -32,6 +32,9 @@ module memory #(
             if (i_write_address == DISPLAY_LENGTH)
                 r_shift_enable <= 1'b1;
 
+            if (i_write_address < DISPLAY_LENGTH)
+                r_shift_enable <= 1'b0;
+
              mem[i_write_address] <= i_write_data;
               
           end
