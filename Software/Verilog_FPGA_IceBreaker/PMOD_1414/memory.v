@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////
 //  Memory block for display buffer 
 module memory #(
-      parameter INIT_FILE = "mem_init.txt"
+      parameter INIT_FILE = "memory_init.txt"
   )(
       input i_clk,
       input i_write_enable,

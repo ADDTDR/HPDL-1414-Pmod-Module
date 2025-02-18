@@ -1,6 +1,8 @@
-message = "ICEBRKR+PMOD14140"
+message = "TINY TAPEOUT 10!"
 
 
+print('Message length', len(message))
+print(message)
 
 with open('data', 'w+') as data_file:
     for letter in message.upper():
