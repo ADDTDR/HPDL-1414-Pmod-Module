@@ -1,8 +1,9 @@
 ////////////////////////////////////////////////////////
 //  Memory block for display buffer 
-module memory #(
-      parameter INIT_FILE = "memory_init.txt"
-  )(
+// #(
+    //   parameter INIT_FILE = "memory_init.txt"
+//   )
+module memory (
       input i_clk,
       input i_write_enable,
       input i_read_enable,
@@ -15,7 +16,7 @@ module memory #(
 	  
 	  parameter CARETCHR = 8'h5f;
       localparam DISPLAY_LENGTH = 15;
-	  reg [7:0]  mem [0:16];
+	  reg [7:0]  mem [0:15];
       reg [0:0] r_shift_enable = 1'b0;
 	  integer i;
 
@@ -49,8 +50,8 @@ module memory #(
           end
       end
 
-      initial if (INIT_FILE) begin
-          $readmemh(INIT_FILE, mem);
-      end
+    //   initial if (INIT_FILE) begin
+    //       $readmemh(INIT_FILE, mem);
+    //   end
     
 endmodule
