@@ -53,5 +53,23 @@ module memory (
     //   initial if (INIT_FILE) begin
     //       $readmemh(INIT_FILE, mem);
     //   end
+    initial begin
+        mem[0]  = 8'h54; // 'T'
+        mem[1]  = 8'h49; // 'I'
+        mem[2]  = 8'h4E; // 'N'
+        mem[3]  = 8'h59; // 'Y'
+        mem[4]  = 8'h5F; // '_'
+        mem[5]  = 8'h54; // 'T'
+        mem[6]  = 8'h41; // 'A'
+        mem[7]  = 8'h50; // 'P'
+        mem[8]  = 8'h45; // 'E'
+        mem[9]  = 8'h4F; // 'O'
+        mem[10] = 8'h55; // 'U'
+        mem[11] = 8'h54; // 'T'
+        mem[12] = 8'h5F; // '_'
+        mem[13] = 8'h31; // '1'
+        mem[14] = 8'h30; // '0'
+        mem[15] = 8'h21; // '!'
+    end
     
 endmodule
