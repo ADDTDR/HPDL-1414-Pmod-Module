@@ -4,6 +4,7 @@
     //   parameter INIT_FILE = "memory_init.txt"
 //   )
 module memory (
+      input i_reset,
       input i_clk,
       input i_write_enable,
       input i_read_enable,
@@ -21,6 +22,28 @@ module memory (
 	  integer i;
 
       always @(posedge i_clk) begin
+          if(i_reset ==1) begin 
+               
+        
+                mem[0]  = 8'h54; // 'T'
+                mem[1]  = 8'h49; // 'I'
+                mem[2]  = 8'h4E; // 'N'
+                mem[3]  = 8'h59; // 'Y'
+                mem[4]  = 8'h5F; // '_'
+                mem[5]  = 8'h54; // 'T'
+                mem[6]  = 8'h41; // 'A'
+                mem[7]  = 8'h50; // 'P'
+                mem[8]  = 8'h45; // 'E'
+                mem[9]  = 8'h4F; // 'O'
+                mem[10] = 8'h55; // 'U'
+                mem[11] = 8'h54; // 'T'
+                mem[12] = 8'h5F; // '_'
+                mem[13] = 8'h31; // '1'
+                mem[14] = 8'h30; // '0'
+                mem[15] = 8'h21; // '!'
+
+          end else begin 
+
           if (i_write_enable == 1'b1) begin
             
 			if(i_write_address >= DISPLAY_LENGTH)begin
@@ -47,6 +70,8 @@ module memory (
 			  	o_read_data <= (i_w_caret_strobe == 1'b1 ) ? mem[i_read_address] : CARETCHR;
 			  else
               	o_read_data <= mem[i_read_address];
+          end
+
           end
       end
 

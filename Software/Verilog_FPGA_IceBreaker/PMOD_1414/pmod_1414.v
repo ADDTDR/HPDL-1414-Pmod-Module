@@ -21,13 +21,16 @@ module pmod_1414 (
 		output HPDL_WR4,
 		// Serial connections 
 		output FTDI_TX,
-		input FTDI_RX
+		input FTDI_RX, 
+		input BTN_N
 
 );
 
 	// Turn off green LED
 	assign LEDG_N = 1'b1; 
 	assign LEDR_N = 1'b1;
+
+	assign reset = ~BTN_N;
 	
 	assign HPDL_D6 = w_data[6];
 	assign HPDL_D5 = w_data[5];
@@ -47,6 +50,8 @@ module pmod_1414 (
 	wire [7:0] w_data; 
 	wire w_hpdl_clk; 
 	wire w_caret_strobe; 
+	wire reset;
+
 
 	// Generate slower clock signals  
 	always @(posedge CLK) 
@@ -59,11 +64,15 @@ module pmod_1414 (
 	assign w_caret_strobe = r_counter[22];
 
 	// Count 0 to 15 for 16 display places
-	always @(posedge w_hpdl_clk) 
-		r_address_counter <= r_address_counter + 1;
-	
+	always @(posedge w_hpdl_clk, posedge reset) 
+		if (reset == 0)
+			r_address_counter <= r_address_counter + 1;
+		else 
+			r_address_counter <= 0;
+
 	// Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
+				.i_reset(reset),
 				.i_clk(CLK),
 				.i_write_enable(mem_wen),
 				.i_read_enable(1'b1),
@@ -99,10 +108,14 @@ module pmod_1414 (
 
 	// Receive w_data from uart 
 	uart_receiver RX(.clk(CLK), .RxD(FTDI_RX), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
+
+
 		
 	// Use negative edge to increment address r_counter only after byte is received 
-	always @(negedge RxD_data_ready)begin
+	always @(negedge RxD_data_ready, posedge reset) begin
 		// if backspace move cursor back 
+		if(reset == 0) begin
+
 		if (GPout == BKSP ) begin
 				// Check if first position 
 				if (r_uart_rx_counter > 0 )
@@ -112,6 +125,10 @@ module pmod_1414 (
 		if ((r_uart_rx_counter < DISPLAY_LENGTH) && (GPout != BKSP)) begin 	
 			r_uart_rx_counter <= r_uart_rx_counter + 1;
 			end
+		end else
+		r_uart_rx_counter <= 0;
+
+
 	end
 	
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(RxD_data), .TxD_busy(tx_busy));
