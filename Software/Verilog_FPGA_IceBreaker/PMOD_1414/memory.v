@@ -21,7 +21,7 @@ module memory (
       reg [0:0] r_shift_enable = 1'b0;
 	  integer i;
 
-      always @(posedge i_clk) begin
+      always @(posedge i_clk or posedge i_reset) begin
           if(i_reset ==1) begin 
                
         

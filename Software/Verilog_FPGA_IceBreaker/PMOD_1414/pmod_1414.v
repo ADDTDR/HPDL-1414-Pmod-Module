@@ -112,7 +112,7 @@ module pmod_1414 (
 
 		
 	// Use negative edge to increment address r_counter only after byte is received 
-	always @(negedge RxD_data_ready, posedge reset) begin
+	always @(negedge RxD_data_ready or posedge reset) begin
 		// if backspace move cursor back 
 		if(reset == 0) begin
 
