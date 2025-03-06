@@ -72,7 +72,6 @@ module pmod_1414 (
 
 	// Character memory, bytes stored from  uart and taken by hpdl module 
 	memory mem_strorage(
-				.i_reset(reset),
 				.i_clk(CLK),
 				.i_write_enable(mem_wen),
 				.i_read_enable(1'b1),
@@ -127,8 +126,6 @@ module pmod_1414 (
 			end
 		end else
 		r_uart_rx_counter <= 0;
-
-
 	end
 	
 	uart_transmitter TX(.clk(CLK), .TxD(FTDI_TX), .TxD_start(RxD_data_ready), .TxD_data(RxD_data), .TxD_busy(tx_busy));
