@@ -47,6 +47,12 @@ module pmod_1414 (
 	wire [7:0] w_data; 
 	wire w_hpdl_clk; 
 	wire w_caret_strobe; 
+	// Uart signals and bus 
+	wire tx_busy;
+	wire RxD_data_ready;
+	wire [7:0] RxD_data;
+	reg [7:0] GPout;
+	
 
 	// Generate slower clock signals  
 	always @(posedge CLK) 
@@ -84,12 +90,7 @@ module pmod_1414 (
 	assign  HPDL_WR3 = (r_address_counter[3] == 1 && r_address_counter[2] == 0 ) ? w_hpdl_clk : 1'b1;
 	assign  HPDL_WR4 = (r_address_counter[3] == 1 && r_address_counter[2] == 1 ) ? w_hpdl_clk : 1'b1;
 
-	// Uart signals and bus 
-	wire tx_busy;
-	wire RxD_data_ready;
-	wire [7:0] RxD_data;
-	reg [7:0] GPout;
-	
+
 	// Disable memory write when backsp char received
 	wire mem_wen;
 	assign mem_wen = (RxD_data_ready == 1'b1 && GPout != BKSP) ? 1'b1 : 1'b0;
