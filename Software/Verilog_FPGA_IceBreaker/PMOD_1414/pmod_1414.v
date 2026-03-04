@@ -51,6 +51,7 @@ module pmod_1414 (
 	wire w_hpdl_clk; 
 	wire w_caret_strobe; 
 	wire reset;
+	wire mem_wen;
 
 
 	// Generate slower clock signals  
@@ -94,7 +95,7 @@ module pmod_1414 (
 
 
 	// Disable memory write when backsp char received
-	wire mem_wen;
+
 	assign mem_wen = (RxD_data_ready == 1'b1 && GPout != BKSP) ? 1'b1 : 1'b0;
 
 	// Save a copy of received w_data from uart 
