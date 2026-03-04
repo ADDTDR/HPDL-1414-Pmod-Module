@@ -1,8 +1,12 @@
-////////////////////////////////////////////////////////
-//  Memory block for display buffer 
-// #(
+/*
+ * Copyright (c) 2025 Andrew Tudoroi
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
+// gds fails with error on memory init file #(
     //   parameter INIT_FILE = "memory_init.txt"
-//   )
+    //   )
 module memory (
       input i_clk,
       input i_write_enable,
@@ -53,7 +57,8 @@ module memory (
     //   initial if (INIT_FILE) begin
     //       $readmemh(INIT_FILE, mem);
     //   end
-    initial begin
+
+        initial begin
         mem[0]  = 8'h54; // 'T'
         mem[1]  = 8'h49; // 'I'
         mem[2]  = 8'h4E; // 'N'
